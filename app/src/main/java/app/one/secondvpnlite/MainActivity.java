@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     public static TextView user_and_pass;
     public static AppCompatRadioButton modo_http;
     public static AppCompatRadioButton modo_https;
+    public static AppCompatRadioButton modo_vmess;
     public static SwitchCompat payload_after_tls;
     public static SwitchCompat direct_mode;
     @SuppressLint("StaticFieldLeak")
@@ -178,6 +179,24 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     private static LinearLayout payload_layout;
     @SuppressLint("StaticFieldLeak")
     private static LinearLayout user_and_pass_layout;
+    @SuppressLint("StaticFieldLeak")
+    private static LinearLayout vmess_server_layout;
+    @SuppressLint("StaticFieldLeak")
+    private static LinearLayout vmess_advanced_panel;
+
+    // VMess Advanced Configuration UI elements
+    @SuppressLint("StaticFieldLeak")
+    public static TextView vmess_server;
+    @SuppressLint("StaticFieldLeak")
+    public static Button vmess_advanced_config_button;
+    @SuppressLint("StaticFieldLeak")
+    public static SwitchCompat vmess_custom_config_switch;
+    @SuppressLint("StaticFieldLeak")
+    public static TextView vmess_custom_host_input;
+    @SuppressLint("StaticFieldLeak")
+    public static TextView vmess_custom_sni_input;
+    @SuppressLint("StaticFieldLeak")
+    public static Button vmess_save_config_button;
 
     private boolean configIsOk;
     private boolean exportWithoutLogin = false;
@@ -254,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         custom_sni_layout = (LinearLayout) findViewById(R.id.activity_mainInputSNILayout);
         payload_layout = (LinearLayout) findViewById(R.id.activity_mainInputPayloadLinearLayout);
         user_and_pass_layout = (LinearLayout) findViewById(R.id.activity_mainInputUserandPassLayout);
+        vmess_server_layout = (LinearLayout) findViewById(R.id.activity_mainInputVMessServerLayout);
+        vmess_advanced_panel = (LinearLayout) findViewById(R.id.vmess_advanced_config_panel);
         start_button = (Button) findViewById(R.id.activity_StartConnection);
 
 
@@ -275,9 +296,18 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         custom_payload = (TextView) findViewById(R.id.activity_mainInputPayloadEditText);
         modo_http = (AppCompatRadioButton) findViewById(R.id.modo_http);
         modo_https = (AppCompatRadioButton) findViewById(R.id.modo_https);
+        modo_vmess = (AppCompatRadioButton) findViewById(R.id.modo_vmess);
         payload_after_tls = (SwitchCompat) findViewById(R.id.activity_mainPayloadAfterTLS);
         direct_mode = (SwitchCompat) findViewById(R.id.activity_mainDirectMode);
         config_msg = (TextView) findViewById(R.id.config_msg_textview);
+        
+        // VMess UI elements
+        vmess_server = (TextView) findViewById(R.id.activity_mainInputVMessServer);
+        vmess_advanced_config_button = (Button) findViewById(R.id.vmess_advanced_config_button);
+        vmess_custom_config_switch = (SwitchCompat) findViewById(R.id.vmess_custom_config_switch);
+        vmess_custom_host_input = (TextView) findViewById(R.id.vmess_custom_host_input);
+        vmess_custom_sni_input = (TextView) findViewById(R.id.vmess_custom_sni_input);
+        vmess_save_config_button = (Button) findViewById(R.id.vmess_save_config_button);
 
         //SETUP AD
         setup_ad();
@@ -287,8 +317,12 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         start_button.setOnClickListener(this);
         modo_https.setOnCheckedChangeListener(this);
         modo_http.setOnCheckedChangeListener(this);
+        modo_vmess.setOnCheckedChangeListener(this);
         payload_after_tls.setOnCheckedChangeListener(this);
         direct_mode.setOnCheckedChangeListener(this);
+        vmess_advanced_config_button.setOnClickListener(this);
+        vmess_custom_config_switch.setOnCheckedChangeListener(this);
+        vmess_save_config_button.setOnClickListener(this);
 
         //Toast.makeText(this,"This is toast",Toast.LENGTH_SHORT).show();
 
@@ -511,9 +545,12 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         if (SecondVPN.getConnectionMode().equals("MODO_HTTPS")){
             modo_https.setChecked(true);
             modo_http.setChecked(false);
+            modo_vmess.setChecked(false);
             direct_mode.setVisibility(View.GONE);
             payload_after_tls.setVisibility(View.VISIBLE);
             custom_sni_layout.setVisibility(View.VISIBLE);
+            vmess_server_layout.setVisibility(View.GONE);
+            vmess_advanced_panel.setVisibility(View.GONE);
 
             if (SecondVPN.isPayloadAfterTLS()){
                 payload_after_tls.setChecked(true);
@@ -525,10 +562,13 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         if (SecondVPN.getConnectionMode().equals("MODO_HTTP")){
             modo_https.setChecked(false);
             modo_http.setChecked(true);
+            modo_vmess.setChecked(false);
 
             direct_mode.setVisibility(View.VISIBLE);
             payload_after_tls.setVisibility(View.GONE);
             custom_sni_layout.setVisibility(View.GONE);
+            vmess_server_layout.setVisibility(View.GONE);
+            vmess_advanced_panel.setVisibility(View.GONE);
 
             if (SecondVPN.isHTTPDirect()){
                 direct_mode.setChecked(true);
@@ -536,6 +576,19 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             }else{
                 direct_mode.setChecked(false);
             }
+        }
+
+        if (SecondVPN.getConnectionMode().equals("MODO_VMESS")){
+            modo_https.setChecked(false);
+            modo_http.setChecked(false);
+            modo_vmess.setChecked(true);
+
+            direct_mode.setVisibility(View.GONE);
+            payload_after_tls.setVisibility(View.GONE);
+            custom_sni_layout.setVisibility(View.GONE);
+            servidor_proxy_layout.setVisibility(View.GONE);
+            payload_layout.setVisibility(View.GONE);
+            vmess_server_layout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -966,6 +1019,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 custom_sni_layout.setVisibility(View.GONE);
                 payload_layout.setVisibility(View.VISIBLE);
                 direct_mode.setVisibility(View.VISIBLE);
+                vmess_server_layout.setVisibility(View.GONE);
+                vmess_advanced_panel.setVisibility(View.GONE);
 
                 if (direct_mode.isChecked()) {
                     if (!SecondVPN.getIsCustomFileIsLocked()){
@@ -989,6 +1044,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 payload_after_tls.setVisibility(View.VISIBLE);
                 custom_sni_layout.setVisibility(View.VISIBLE);
                 direct_mode.setVisibility(View.GONE);
+                vmess_server_layout.setVisibility(View.GONE);
+                vmess_advanced_panel.setVisibility(View.GONE);
 
                 if (payload_after_tls.isChecked()) {
                     if (!SecondVPN.getIsCustomFileIsLocked()){
@@ -1005,6 +1062,26 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                     payload_layout.setVisibility(View.GONE);
                     servidor_proxy_layout.setVisibility(View.GONE);
                 }
+            }
+            if (modo_vmess.isChecked()){
+                app_prefs.edit().putString("CONNECTION_MODE", "MODO_VMESS").apply();
+                payload_after_tls.setEnabled(false);
+                direct_mode.setEnabled(false);
+                payload_after_tls.setVisibility(View.GONE);
+                custom_sni_layout.setVisibility(View.GONE);
+                payload_layout.setVisibility(View.GONE);
+                direct_mode.setVisibility(View.GONE);
+                servidor_proxy_layout.setVisibility(View.GONE);
+                vmess_server_layout.setVisibility(View.VISIBLE);
+                
+                // Load VMess configuration
+                loadVMessConfiguration();
+            }
+
+            // Handle VMess custom config switch
+            if (buttonView == vmess_custom_config_switch) {
+                SecondVPN.setVMessAdvancedConfig(isChecked);
+                updateVMessAdvancedConfigUI();
             }
 
         if (!intentToImport){
@@ -1233,6 +1310,14 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                     showLog();
                     break;
 
+                case R.id.vmess_advanced_config_button:
+                    toggleVMessAdvancedPanel();
+                    break;
+
+                case R.id.vmess_save_config_button:
+                    saveVMessConfiguration();
+                    break;
+
             }
 
         }
@@ -1285,6 +1370,25 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
                 }
             }
+            if (modo_vmess.isChecked()){
+                // Save VMess server configuration
+                if (vmess_server != null) {
+                    app_prefs.edit().putString("SSH_SERVER_DOMAIN",vmess_server.getText().toString()).apply();
+                }
+                
+                // Save advanced config state
+                app_prefs.edit().putBoolean("IS_VMESS_ADVANCED_CONFIG", SecondVPN.isVMessAdvancedConfigEnabled()).apply();
+                
+                // Save custom host and SNI if advanced config is enabled
+                if (SecondVPN.isVMessAdvancedConfigEnabled()) {
+                    if (vmess_custom_host_input != null) {
+                        app_prefs.edit().putString("VMESS_CUSTOM_HOST", vmess_custom_host_input.getText().toString()).apply();
+                    }
+                    if (vmess_custom_sni_input != null) {
+                        app_prefs.edit().putString("VMESS_CUSTOM_SNI", vmess_custom_sni_input.getText().toString()).apply();
+                    }
+                }
+            }
         }
     }
 
@@ -1317,8 +1421,17 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             if (modo_https.getVisibility() == View.VISIBLE) {
                 modo_https.setEnabled(false);
             }
-            if (modo_https.getVisibility() == View.VISIBLE) {
-                modo_https.setEnabled(false);
+            if (modo_vmess != null && modo_vmess.getVisibility() == View.VISIBLE) {
+                modo_vmess.setEnabled(false);
+            }
+            // Disable VMess elements
+            if (vmess_server_layout != null && vmess_server_layout.getVisibility() == View.VISIBLE) {
+                if (vmess_server != null) vmess_server.setEnabled(false);
+                if (vmess_advanced_config_button != null) vmess_advanced_config_button.setEnabled(false);
+                if (vmess_custom_config_switch != null) vmess_custom_config_switch.setEnabled(false);
+                if (vmess_custom_host_input != null) vmess_custom_host_input.setEnabled(false);
+                if (vmess_custom_sni_input != null) vmess_custom_sni_input.setEnabled(false);
+                if (vmess_save_config_button != null) vmess_save_config_button.setEnabled(false);
             }
 
         } catch (Exception e) {
@@ -1363,11 +1476,114 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 if (modo_https.getVisibility() == View.VISIBLE) {
                     modo_https.setEnabled(true);
                 }
+                if (modo_vmess != null && modo_vmess.getVisibility() == View.VISIBLE) {
+                    modo_vmess.setEnabled(true);
+                }
+                // Enable VMess elements
+                if (vmess_server_layout != null && vmess_server_layout.getVisibility() == View.VISIBLE) {
+                    if (vmess_server != null) vmess_server.setEnabled(true);
+                    if (vmess_advanced_config_button != null) vmess_advanced_config_button.setEnabled(true);
+                    if (vmess_custom_config_switch != null) vmess_custom_config_switch.setEnabled(true);
+                    // These are enabled/disabled based on custom config switch
+                    if (vmess_custom_host_input != null) vmess_custom_host_input.setEnabled(SecondVPN.isVMessAdvancedConfigEnabled());
+                    if (vmess_custom_sni_input != null) vmess_custom_sni_input.setEnabled(SecondVPN.isVMessAdvancedConfigEnabled());
+                    if (vmess_save_config_button != null) vmess_save_config_button.setEnabled(SecondVPN.isVMessAdvancedConfigEnabled());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    // VMess Configuration Methods
+    private void toggleVMessAdvancedPanel() {
+        if (vmess_advanced_panel.getVisibility() == View.GONE) {
+            vmess_advanced_panel.setVisibility(View.VISIBLE);
+            vmess_advanced_config_button.setText("Hide " + getString(R.string.vmess_advanced_config));
+        } else {
+            vmess_advanced_panel.setVisibility(View.GONE);
+            vmess_advanced_config_button.setText(getString(R.string.vmess_advanced_config));
+        }
+    }
+
+    private void loadVMessConfiguration() {
+        // Load VMess server configuration
+        if (vmess_server != null) {
+            vmess_server.setText(SecondVPN.getServidorSSHDomain()); // Reuse SSH server field for VMess
+        }
+        
+        // Load advanced configuration state
+        boolean isAdvancedEnabled = SecondVPN.isVMessAdvancedConfigEnabled();
+        if (vmess_custom_config_switch != null) {
+            vmess_custom_config_switch.setChecked(isAdvancedEnabled);
+        }
+        
+        // Load custom host and SNI
+        if (vmess_custom_host_input != null) {
+            vmess_custom_host_input.setText(SecondVPN.getVMessCustomHost());
+        }
+        if (vmess_custom_sni_input != null) {
+            vmess_custom_sni_input.setText(SecondVPN.getVMessCustomSNI());
+        }
+        
+        updateVMessAdvancedConfigUI();
+    }
+
+    private void updateVMessAdvancedConfigUI() {
+        boolean isAdvancedEnabled = SecondVPN.isVMessAdvancedConfigEnabled();
+        
+        // Enable/disable input fields based on custom config toggle
+        if (vmess_custom_host_input != null) {
+            vmess_custom_host_input.setEnabled(isAdvancedEnabled);
+        }
+        if (vmess_custom_sni_input != null) {
+            vmess_custom_sni_input.setEnabled(isAdvancedEnabled);
+        }
+        if (vmess_save_config_button != null) {
+            vmess_save_config_button.setEnabled(isAdvancedEnabled);
+        }
+
+        // Set default values when enabling custom config
+        if (isAdvancedEnabled && vmess_custom_host_input != null && vmess_custom_host_input.getText().toString().isEmpty()) {
+            vmess_custom_host_input.setText("bugs.com");
+        }
+    }
+
+    private void saveVMessConfiguration() {
+        if (vmess_custom_host_input != null && vmess_custom_sni_input != null) {
+            // Save original values if not already saved
+            if (SecondVPN.getVMessOriginalHost().isEmpty()) {
+                SecondVPN.setVMessOriginalHost(SecondVPN.getServidorSSHDomain());
+                SecondVPN.setVMessOriginalSNI(SecondVPN.getSNI());
+            }
+            
+            String customHost = vmess_custom_host_input.getText().toString().trim();
+            String customSNI = vmess_custom_sni_input.getText().toString().trim();
+            
+            if (SecondVPN.isVMessAdvancedConfigEnabled()) {
+                // Use custom values
+                SecondVPN.setVMessCustomHost(customHost.isEmpty() ? "bugs.com" : customHost);
+                SecondVPN.setVMessCustomSNI(customSNI);
+                
+                // Apply custom configuration
+                app_prefs.edit().putString("SSH_SERVER_DOMAIN", SecondVPN.getVMessCustomHost()).apply();
+                app_prefs.edit().putString("CUSTOM_SNI", SecondVPN.getVMessCustomSNI()).apply();
+                
+                Toast.makeText(this, getString(R.string.vmess_config_saved), Toast.LENGTH_SHORT).show();
+            } else {
+                // Restore original values
+                if (!SecondVPN.getVMessOriginalHost().isEmpty()) {
+                    app_prefs.edit().putString("SSH_SERVER_DOMAIN", SecondVPN.getVMessOriginalHost()).apply();
+                    app_prefs.edit().putString("CUSTOM_SNI", SecondVPN.getVMessOriginalSNI()).apply();
+                }
+                
+                Toast.makeText(this, getString(R.string.vmess_config_restored), Toast.LENGTH_SHORT).show();
+            }
+            
+            // Update UI to reflect changes
+            updateLayoutWithConfig3();
+        }
     }
 
     /**

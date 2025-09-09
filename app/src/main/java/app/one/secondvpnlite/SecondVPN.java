@@ -125,6 +125,55 @@ public class SecondVPN extends Application {
         return app_prefs.getBoolean("LAST_A",false);
     }
 
+    // VMess V2Ray Configuration methods
+    public static boolean isVMessEnabled() {
+        return app_prefs.getBoolean("IS_VMESS_ENABLED", false);
+    }
+
+    public static boolean isVMessAdvancedConfigEnabled() {
+        return app_prefs.getBoolean("IS_VMESS_ADVANCED_CONFIG", false);
+    }
+
+    public static String getVMessCustomHost() {
+        return app_prefs.getString("VMESS_CUSTOM_HOST", "bugs.com");
+    }
+
+    public static String getVMessCustomSNI() {
+        return app_prefs.getString("VMESS_CUSTOM_SNI", "");
+    }
+
+    public static String getVMessOriginalHost() {
+        return app_prefs.getString("VMESS_ORIGINAL_HOST", "");
+    }
+
+    public static String getVMessOriginalSNI() {
+        return app_prefs.getString("VMESS_ORIGINAL_SNI", "");
+    }
+
+    public static void setVMessEnabled(boolean enabled) {
+        app_prefs.putBoolean("IS_VMESS_ENABLED", enabled);
+    }
+
+    public static void setVMessAdvancedConfig(boolean enabled) {
+        app_prefs.putBoolean("IS_VMESS_ADVANCED_CONFIG", enabled);
+    }
+
+    public static void setVMessCustomHost(String host) {
+        app_prefs.putString("VMESS_CUSTOM_HOST", host);
+    }
+
+    public static void setVMessCustomSNI(String sni) {
+        app_prefs.putString("VMESS_CUSTOM_SNI", sni);
+    }
+
+    public static void setVMessOriginalHost(String host) {
+        app_prefs.putString("VMESS_ORIGINAL_HOST", host);
+    }
+
+    public static void setVMessOriginalSNI(String sni) {
+        app_prefs.putString("VMESS_ORIGINAL_SNI", sni);
+    }
+
     public static void setDefaultPrefs(){
         app_prefs.clear();
         app_prefs.putString("CONNECTION_MODE","MODO_HTTP");
@@ -133,6 +182,11 @@ public class SecondVPN extends Application {
         app_prefs.putBoolean("PAYLOAD_AFTER_TLS",false);
         app_prefs.putBoolean("IS_CUSTOM_FILE_LOCKED",false);
         app_prefs.putString("LAST_VPN_STATUS","DESCONECTADO");
+        // VMess defaults
+        app_prefs.putBoolean("IS_VMESS_ENABLED", false);
+        app_prefs.putBoolean("IS_VMESS_ADVANCED_CONFIG", false);
+        app_prefs.putString("VMESS_CUSTOM_HOST", "bugs.com");
+        app_prefs.putString("VMESS_CUSTOM_SNI", "");
 
     }
 

@@ -185,4 +185,15 @@
     <string name="show_logs_start">Show logs on start</string>
     <string name="starting_tunnel_service">Starting tunnel service...</string>
     <string name="splittunneling" >All apps run through encrypted VPN\n connection. If you want to exclude any\n app, tap the button on right.</string>
+    
+    <!-- VMess V2Ray Configuration Strings -->
+    <string name="vmess_advanced_config">Advanced Configuration</string>
+    <string name="vmess_enable_custom_config">Enable custom configuration</string>
+    <string name="vmess_custom_host">Custom Host</string>
+    <string name="vmess_custom_host_hint">Custom host (default: bugs.com)</string>
+    <string name="vmess_custom_sni_hint">Custom SNI</string>
+    <string name="vmess_save_config">Save Configuration</string>
+    <string name="vmess_config_saved">Configuration saved successfully</string>
+    <string name="vmess_config_restored">Original configuration restored</string>
+    <string name="vmess_mode">VMess Mode</string>
 </resources>
