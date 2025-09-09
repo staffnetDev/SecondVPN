@@ -829,6 +829,29 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             e.printStackTrace();
         }
 
+        // VMess mode validation
+        if (SecondVPN.getConnectionMode().equals("MODO_VMESS")) {
+            String vmessServer = SecondVPN.getServidorSSHDomain();
+            if (vmessServer.isEmpty()) {
+                configIsOk = false;
+            }
+            // Basic VMess URL validation
+            if (!vmessServer.startsWith("vmess://") && !vmessServer.contains("://")) {
+                // Allow both vmess:// URLs and regular server:port format
+                try {
+                    String[] ipSplit = vmessServer.split(":");
+                    String servidor = ipSplit[0];
+                    int porta = Integer.parseInt(ipSplit[1]);
+                    
+                    if (servidor.isEmpty() || porta == 0) {
+                        configIsOk = false;
+                    }
+                } catch (Exception e) {
+                    configIsOk = false;
+                }
+            }
+        }
+
         if (SecondVPN.getConnectionMode().equals("MODO_HTTP")) {
             if (direct_mode.isChecked()) {
                 if (SecondVPN.getServidorSSHDomain().isEmpty()){

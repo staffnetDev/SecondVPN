@@ -122,6 +122,14 @@ public class ExportConfig extends AppCompatActivity implements View.OnClickListe
                         config_str.put("LockEditLogin", lock_login.isChecked());
                         config_str.put("ConfigAuthData", SecondVPN.getUsuarioAndPass());
 
+                        // VMess Configuration Export
+                        config_str.put("isVMessEnabled", SecondVPN.isVMessEnabled());
+                        config_str.put("isVMessAdvancedConfig", SecondVPN.isVMessAdvancedConfigEnabled());
+                        config_str.put("vMessCustomHost", SecondVPN.getVMessCustomHost());
+                        config_str.put("vMessCustomSNI", SecondVPN.getVMessCustomSNI());
+                        config_str.put("vMessOriginalHost", SecondVPN.getVMessOriginalHost());
+                        config_str.put("vMessOriginalSNI", SecondVPN.getVMessOriginalSNI());
+
                     } catch (Exception e) {
                         Toast.makeText(this, getString(R.string.erro_save_file), Toast.LENGTH_SHORT).show();
                         e.printStackTrace();

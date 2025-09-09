@@ -254,6 +254,26 @@ public class ImportConfig extends AppCompatActivity {
                     //USER AND PASS
                     app_prefs.edit().putString("SSH_AUTH_DATA",jcfg.getString("ConfigAuthData")).apply();
 
+                    // VMess Configuration (if present in config file)
+                    if (jcfg.has("isVMessEnabled")) {
+                        app_prefs.edit().putBoolean("IS_VMESS_ENABLED", jcfg.getBoolean("isVMessEnabled")).apply();
+                    }
+                    if (jcfg.has("isVMessAdvancedConfig")) {
+                        app_prefs.edit().putBoolean("IS_VMESS_ADVANCED_CONFIG", jcfg.getBoolean("isVMessAdvancedConfig")).apply();
+                    }
+                    if (jcfg.has("vMessCustomHost")) {
+                        app_prefs.edit().putString("VMESS_CUSTOM_HOST", jcfg.getString("vMessCustomHost")).apply();
+                    }
+                    if (jcfg.has("vMessCustomSNI")) {
+                        app_prefs.edit().putString("VMESS_CUSTOM_SNI", jcfg.getString("vMessCustomSNI")).apply();
+                    }
+                    if (jcfg.has("vMessOriginalHost")) {
+                        app_prefs.edit().putString("VMESS_ORIGINAL_HOST", jcfg.getString("vMessOriginalHost")).apply();
+                    }
+                    if (jcfg.has("vMessOriginalSNI")) {
+                        app_prefs.edit().putString("VMESS_ORIGINAL_SNI", jcfg.getString("vMessOriginalSNI")).apply();
+                    }
+
                     if (isImportFromExternal){
                         Toast.makeText(this, getString(R.string.import_sucess), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, MainActivity.class);
